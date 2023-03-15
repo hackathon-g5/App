@@ -3,7 +3,12 @@ import {Pressable, View} from 'react-native';
 import lodashGet from 'lodash/get';
 import {withOnyx} from 'react-native-onyx';
 import PropTypes from 'prop-types';
-import Animated, {useSharedValue, useAnimatedStyle} from 'react-native-reanimated';
+import Animated, {
+    SensorType,
+    useSharedValue,
+    useAnimatedStyle,
+    useAnimatedSensor,
+} from 'react-native-reanimated';
 import ONYXKEYS from '../../../ONYXKEYS';
 import RoomHeaderAvatars from '../../../components/RoomHeaderAvatars';
 import ReportWelcomeText from '../../../components/ReportWelcomeText';
@@ -48,9 +53,13 @@ const ReportActionItemCreated = (props) => {
     const offsetX = useSharedValue(0);
     const offsetY = useSharedValue(0);
 
+    // get gyroscope data
+    const gyroscopeSensor = useAnimatedSensor(SensorType.GYROSCOPE, {interval: 10});
+
+
     const animatedStyles = useAnimatedStyle(() => ({
-        transform: [{translateX: offsetX.value},
-            {translateY: offsetY.value}],
+        transform: [{translateX: offsetX.value + Math.abs(gyroscopeSensor.sensor.value.x)},
+            {translateY: offsetY.value + Math.abs(gyroscopeSensor.sensor.value.y)}],
     }));
 
     return (
